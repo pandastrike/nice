@@ -3,26 +3,32 @@ class HTML
 
   _tag: (name,argument) ->
 
+    # when string
+    if argument?.substr
+      content = argument or ""
+      attributes = ""
+      
     # when array
-    if argument?.join
+    else if argument?.join
       content = argument.join ""
       attributes = ""
 
     # when object
-    else if content = (argument?.content or argument?.text)
-      delete argument.content; delete argument.text
-      if content.join
+    else if argument?
+      if (content = (argument.content or argument.text))?
+        delete argument.content; delete argument.text
+      if content?.join
         content = content.join ""
       if argument.url
         argument.href = argument.url ; delete argument.url
       attributes = ("#{key}='#{value}'" for key,value of argument).join " "
-
-    # default string
-    else 
-      content = argument or ""
-      attributes = ""
-
-    if content == ""
+      content ?= ""
+      
+    # default nil
+    else
+      content = ""; attributes = ""
+    
+    if content == "" and not name == "script"
       if attributes == ""
         "<#{name}/>"
       else
