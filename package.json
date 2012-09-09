@@ -2,7 +2,7 @@
   "name": "nice",
   "version": "0.0.0",
   "description": "Component-based (instead of template-based) views for CoffeeScript",
-  "main": "lib/nice.js",
+  "main": "nice.js",
   "directories": {
     "example": "examples"
   },

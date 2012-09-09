@@ -1,4 +1,4 @@
-HTML = require "../../../src/html"
+HTML = require "nice/html"
 beautify = require "../../src/beautify-html"
 
 class ComponentHTML extends HTML

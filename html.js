@@ -74,6 +74,8 @@
     _fn(tag);
   }
 
+  HTML.beautify = require("./beautify");
+
   module.exports = HTML;
 
 }).call(this);

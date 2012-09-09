@@ -157,8 +157,6 @@ As your applications become more responsive, fine-grained rendering is more and 
 
 ## Future Plans
 
-### Behaviors
-
 * We can make it possible to add behaviors, such as making elements of a list draggable, using mixins. Since we can easily convert HTML strings like this into DOM trees with JQuery, we can write component-classes that use the HTML classes to generate DOM trees and then bind behaviors to them.
 
 * We can also do the equivalent of compilation by simply memo-izing the methods.

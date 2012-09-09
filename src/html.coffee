@@ -51,5 +51,7 @@ for tag in "html head title base link meta style script noscript body section na
   do (tag) ->
     HTML.prototype[tag] = (x) -> @_tag(tag,x)
 
+HTML.beautify = require "./beautify"
+
 module.exports = HTML
 
