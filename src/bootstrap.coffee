@@ -1,5 +1,8 @@
 class Bootstrap 
   
+  constructor: (options) ->
+    @html = options.html if options?.html?
+  
   header: (content) ->
     @html.div
       class: "page-header"
@@ -32,10 +35,10 @@ class Bootstrap
             content: item.text
 
   navtabs: (tabs) ->
-  
     @html.div 
       class: "tabbable"
       content: [
+        
         @html.ul
           class: "nav nav-tabs"
           content: for id,tab of tabs
@@ -45,7 +48,7 @@ class Bootstrap
                 href: "##{id}"
                 "data-toggle": "tab"
                 text: tab.label
-
+        
         @html.div
           class: "tab-content"
           content: for id,tab of tabs

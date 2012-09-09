@@ -3,10 +3,12 @@ beautify = require "./beautify"
 class Pages
   
   constructor: (options) ->
+    @html = options.html if options.html?
     @_javascript = options.javascript
     @_css = options.css
   
   page: (options) ->
+    
     {javascript,css,body,meta} = options
 
     beautify @doctype() + @html.html [
