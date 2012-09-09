@@ -1,4 +1,4 @@
 module.exports = 
-  HTML: require "nice/html"
-  Bootstrap: require "nice/bootstrap"
-  Pages: require "nice/pages"
+  HTML: require "./html"
+  Bootstrap: require "./bootstrap"
+  Pages: require "./pages"

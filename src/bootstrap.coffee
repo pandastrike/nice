@@ -1,4 +1,4 @@
-Bootstrap = 
+class Bootstrap 
   
   navbar: (options) ->
     classes = ["navbar"]
