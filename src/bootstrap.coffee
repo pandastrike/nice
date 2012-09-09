@@ -1,5 +1,10 @@
 class Bootstrap 
   
+  header: (content) ->
+    @html.div
+      class: "page-header"
+      content: content    
+    
   navbar: (options) ->
     classes = ["navbar"]
     classes.push "navbar-inverse" if options.inverse?
@@ -26,6 +31,30 @@ class Bootstrap
             href: item.url
             content: item.text
 
+  navtabs: (tabs) ->
+  
+    @html.div 
+      class: "tabbable"
+      content: [
+        @html.ul
+          class: "nav nav-tabs"
+          content: for id,tab of tabs
+            @html.li
+              class: ["active" if tab.active?]
+              content: @html.a
+                href: "##{id}"
+                "data-toggle": "tab"
+                text: tab.label
+
+        @html.div
+          class: "tab-content"
+          content: for id,tab of tabs
+            @html.div
+              class: ["tab-pane fade in","active" if tab.active?]
+              id: id
+              content: tab.content ]
+  
+        
   container: (items) ->
     @html.div
       class: "container"

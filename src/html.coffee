@@ -21,7 +21,9 @@ class HTML
         content = content.join ""
       if argument.url
         argument.href = argument.url ; delete argument.url
-      attributes = ("#{key}='#{value}'" for key,value of argument).join " "
+      attributes = (for key,value of argument
+        value = value.join(" ").trim() if value?.join?
+        "#{key}='#{value}'" if value? and value!="").join(" ").trim()
       content ?= ""
       
     # default nil
