@@ -1,43 +1,36 @@
-beautify = require "./beautify"
+{w} = require "fairmont"
 
 class Pages
   
   constructor: (options) ->
-    @html = options.html if options.html?
-    @_javascript = options.javascript
-    @_css = options.css
-  
+    {@html,@resources} = options
+      
   page: (options) ->
     
-    {javascript,css,body,meta} = options
+    {meta,javascript,css,body} = options
 
-    beautify @doctype() + @html.html [
-    
-      @html.head [
-        @meta(meta)
-        @javascript(javascript)
-        @css(css)
-      ]
-    
+    @html.doctype()
+    @html.html =>
+      @html.head =>
+        @meta meta
+        @javascript javascript
+        @css css
       @html.body body
-    ]
     
-  doctype: -> "<!DOCTYPE html>" 
-
   meta: -> ""
 
   javascript: (scripts) ->
-    (for script in scripts.split(" ")
+    for script in w scripts
       @html.script
-        src: @_javascript[script]
-        type: "text/javascript").join " "
+        src: @resources.javascript[script]
+        type: "text/javascript"
 
   css: (stylesheets) ->
-    (for stylesheet in stylesheets.split(" ")
+    for stylesheet in w stylesheets
       @html.link
-        href: @_css[stylesheet]
+        href: @resources.css[stylesheet]
         type: "text/css"
-        rel: "stylesheet").join ""
+        rel: "stylesheet"
 
   
 module.exports = Pages

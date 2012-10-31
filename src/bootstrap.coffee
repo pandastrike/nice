@@ -1,90 +1,65 @@
 class Bootstrap 
   
-  constructor: (options) ->
-    @html = options.html if options?.html?
-  
-  header: (content) ->
-    @html.div
-      class: "page-header"
-      content: content    
-    
-  navbar: (options) ->
-    classes = ["navbar"]
-    classes.push "navbar-inverse" if options.inverse?
-    classes.push "navbar-fixed-top" if options.fixed_top?
-    @html.div
-      class: classes.join(" ")
-      content: @html.div 
-        class: "navbar-inner"
-        content: @container options.content
+  constructor: (options) -> {@html} = options
 
-  brand: (name) ->
-    @html.a
-      href: "/"
-      class: "brand"
-      content: name
+  container: (content) ->
+    @html.div class: "container", content
   
+  row: (content) ->
+    @html.div class: "row", content
+
+  column: (options,content) ->
+    {width,offset} = options
+    classes = ["span#{width}"]
+    classes.push "offset#{offset}" if offset?
+    @html.div class: classes, content
+
+  header: (content) ->
+    @html.div class: "page-header", content
+    
+  hero: (content) ->
+    @html.div class: "hero-unit", content
+    
+  navbar: (options,content) ->
+    {inverse,fixedTop} = options
+    classes = ["navbar"]
+    classes.push "navbar-inverse" if inverse?
+    classes.push "navbar-fixed-top" if fixedTop?
+    @html.div class: classes, => 
+        @html.div class: "navbar-inner", content
+
   navmenu: (items) ->
-    @html.ul
-      class: "nav"
-      content: for item in items
-        @html.li
-          class: ("active" if item.active?)
-          content: @html.a
-            href: item.url
-            content: item.text
+    @html.ul class: "nav", =>
+      for item in items
+        {text,url} = item
+        @html.li class: ("active" if item.active?), =>
+          @html.a href: url, text
 
   navtabs: (tabs) ->
-    @html.div 
-      class: "tabbable"
-      content: [
-        
-        @html.ul
-          class: "nav nav-tabs"
-          content: for id,tab of tabs
-            @html.li
-              class: ["active" if tab.active?]
-              content: @html.a
-                href: "##{id}"
-                "data-toggle": "tab"
-                text: tab.label
-        
-        @html.div
-          class: "tab-content"
-          content: for id,tab of tabs
-            @html.div
-              class: ["tab-pane fade in","active" if tab.active?]
-              id: id
-              content: tab.content ]
-  
-        
-  container: (items) ->
-    @html.div
-      class: "container"
-      content: items
+    @html.div class: "tabbable", =>
+      @html.ul class: "nav nav-tabs", =>
+        for id,tab of tabs
+          @html.li class: ("active" if tab.active?), =>
+            @html.a 
+              href: "##{id}"
+              "data-toggle": "tab"
+              tab.label
     
-  hero: (items) ->
-    @html.div
-      class: "hero-unit"
-      content: items
-      
-  row: (items) ->
-    @html.div
-      class: "row"
-      content: items
+      @html.div class: "tab-content", =>
+        for id,tab of tabs
+          @html.div 
+            id: id
+            class: ["tab-pane fade in","active" if tab.active?]
+            tab.content
   
-  column: (width,items) ->
-    @html.div
-      class: "span#{width}"
-      content: items
-      
+  brand: (name) ->
+    @html.a class: "brand", href: "/", name
+        
   button: (options) ->
+    {large,primary,url,text} = options
     classes = [ "btn" ]
-    classes.push "btn-primary" if options.primary?
-    classes.push "btn-large" if options.large?
-    @html.a
-      href: options.url
-      text: options.text
-      class: classes.join(" ")
+    classes.push "btn-primary" if primary?
+    classes.push "btn-large" if large?
+    @html.a class: classes, href: url, text
         
 module.exports = Bootstrap
