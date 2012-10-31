@@ -16,35 +16,29 @@ Nice provides the foundation for building component-based views.
 
 Nice provides an simple way to generate HTML from CoffeeScript (or Javascript, but, honestly, it's too cumbersome to use that way). For example:
 
-    @div [
+    @div =>
       @h1 novel.title
-      @h2
-        class: "byline"
+      @h2 class: "byline", novel.author
         text: novel.author
       @p novel.synopsis
-    ]
 
 Of course, that by itself isn't all that interesting, although it's certainly more readable than straight HTML. The really useful bit comes in when you start defining classes and methods that use this approach:
 
-    class ComponentHTML extends HTML
+    class Components
 
       list: (list) ->
-        @ul (@li @a item for item in list)
+        @html.ul =>
+          (@html.li => @html.a href: item.url, (item.text)) for item in list
 
-Here we've defined an `list` method that will take an array of objects and gives us back the HTML for a list of hyperlinks. We can now reuse that in other classes or even override it.
+Here we've defined a `list` method that will take an array of objects and gives us back the HTML for a list of hyperlinks. We can now reuse that in other classes or even override it.
 
 ### Bootstrap Support
 
 This is exactly what the Nice Bootstrap mixin does. You can write this:
 
-    @navbar
-      inverse: true
-      fixed_top: true
-      content: [
-        @brand "Nice"
-        @navmenu [
-          { url: "/", text: "Home", active: true }
-          { url: "/about", text: "Getting Started"} ]]
+    @navbar inverse: true, fixed_top: true, =>
+      @brand "Nice"
+      # etc ...
           
 And, of course, you can easily define your own mixins.
 
@@ -52,39 +46,39 @@ And, of course, you can easily define your own mixins.
 
 Let's suppose we want to encapsulate all the code related to displaying information about novels. We might define a class like this:
 
-    class NovelHTML extends ComponentHTML
+    class NovelHTML
+  
+      constructor: (@novel) ->
+        @H = new HTML
+        @B = new Bootstrap @H
 
-      description: (novel) ->
-        @div [
-          @h1 novel.title
-          @h2
-            class: "byline"
-            text: novel.author
-          @p novel.synopsis
-          @div
-            class: "characters"
-            content: @characterList novel.characters
-        ]
+      description: ->
+        @B.header => 
+          @H.h1 @novel.title
+          @H.h2 class: "byline", (@novel.author)
+        @B.container =>
+          @B.row => 
+            @B.column 4, =>
+              @H.h1 "Synopsis"
+              @H.p @novel.synopsis
+            @B.column 4, =>
+              @H.div class: "characters", => @characterList()
 
-      characterList: (names) ->
-        @list ({text: name, url: "novel://qubit/characters/#{name}"} for name in names)
-
-We define `characterList` to be a wrapper around the `list` method above. Then we use that method within our `description` method.
+      characterList: ->
+        @H.ul =>
+          for name in @novel.characters
+            @li => @a href: "#{@novel.url}/characters/#{name}", name
 
 So now we can replace templates with simple method invocations:
 
-    novel = 
+    html = new NovelHTML
       title: "QUBIT"
+      url: "http://rocket.ly/qubit"
       author: "Dan Yoder"
       synopsis: "When the first practical quantum computer is developed, an ambitious criminal exploits to steal trillions of dollars."
       characters: ["Ulysses Mercy","Vihaan Malhotra","Katya Brittain","Ray Austin"]
-
-    novelHTML = new NovelHTML
-
-    console.log beautify (novelHTML.description novel), 
-      indent_size: 2
-      indent_char: ' '
-      max_char: 78
+    
+    console.log HTML.beautify html.description()
 
 Which will give us the following HTML:
 
@@ -93,18 +87,16 @@ Which will give us the following HTML:
       <h2 class='byline'>Dan Yoder</h2>
       <p>When the first practical quantum computer is developed, an ambitious criminal
         exploits to steal trillions of dollars.</p>
-      <div class='characters'>
-        <ul class='menu'>
-          <li><a href='novel://qubit/characters/Ulysses Mercy'>Ulysses Mercy</a>
-          </li>
-          <li><a href='novel://qubit/characters/Vihaan Malhotra'>Vihaan Malhotra</a>
-          </li>
-          <li><a href='novel://qubit/characters/Katya Brittain'>Katya Brittain</a>
-          </li>
-          <li><a href='novel://qubit/characters/Ray Austin'>Ray Austin</a>
-          </li>
-        </ul>
-      </div>
+      <ul>
+        <li><a href='novel://qubit/characters/Ulysses Mercy'>Ulysses Mercy</a>
+        </li>
+        <li><a href='novel://qubit/characters/Vihaan Malhotra'>Vihaan Malhotra</a>
+        </li>
+        <li><a href='novel://qubit/characters/Katya Brittain'>Katya Brittain</a>
+        </li>
+        <li><a href='novel://qubit/characters/Ray Austin'>Ray Austin</a>
+        </li>
+      </ul>
     </div>
 
 
@@ -122,12 +114,10 @@ Oh, and have we discussed JQuery? How many designers have learned at least a sma
 
 And I'm not convinced that, provided the language is expressive enough, that code-based HTML generation isn't actually easier even for designers well-versed in HTML. Is this:
 
-    @div [
+    @div =>
       @h1 novel.title
-      @h2
-        class: "byline"
-        text: novel.author
-      @p novel.synopsis ]
+      @h2 class: "byline", novel.author
+      @p novel.synopsis
 
 really that much more difficult for a designer to deal with than this:
 
@@ -145,7 +135,7 @@ Separation of concerns is a design principle that is ideally carried out through
 
 Strictly enforcement *any* design principle is, in a sense, the antithesis of both agile development and good design generally. Hermetic abstractions are usually bad, especially for developers that know what they're doing.
 
-And let's not forget about the fact that, more and more, we live in a world with rich clients, where a lot of behavior is implemented client-side anyway. Fanatically enforcing separation of concerns for generating HTML is pointless if that separation can be trivially compromised in JQuery event handlers.
+And let's not forget about the fact that, more and more, we live in a world with rich clients, where a lot of behavior is implemented client-side anyway. Fanatically enforcing separation of concerns for generating HTML is pointless if that separation can be (and often is) trivially compromised in JQuery event handlers.
 
 ### Code Is More Powerful Than Templates 
 
