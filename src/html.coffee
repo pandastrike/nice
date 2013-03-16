@@ -1,16 +1,8 @@
 {w,type} = require "fairmont"
+beautify = require "./beautify"
 
 class HTML
-  constructor: (@options) ->
-    @buffer = ""
-    
-  # a group is like a virtual div 
-  group: (content) ->
-    if content.join?
-      content.join("")
-    else
-      content
-
+  
   text: (string) -> @buffer += string
   
   doctype: -> @text "<!DOCTYPE html>" 
@@ -45,6 +37,17 @@ class HTML
       @text "/>"
       
     @buffer
+    
+  beautify: (fn) ->
+    fn()
+    # TODO: Figure out a way for mixins to have 
+    # options. One possibility is to just to have a
+    # shared options object that each mixin looks 
+    # at for it's options, but that feels wrong.
+    @buffer = beautify @buffer,
+      indent_size: 2
+      indent_char: ' '
+      max_char: 78
 
 for tag in w "html head title style script noscript body section nav
   article aside h1 h2 h3 h4 h5 h6 hgroup header footer address p pre blockquote 
@@ -63,8 +66,4 @@ for tag in w "area base br col command embed hr img input keygen link meta param
   do (tag) ->
     HTML::[tag] = (args...) -> @_tag(tag,true,args...)
 
-
-HTML.beautify = require "./beautify"
-
 module.exports = HTML
-

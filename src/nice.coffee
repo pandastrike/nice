@@ -1,4 +1,4 @@
 module.exports = 
   HTML: require "./html"
-  Bootstrap: require "./bootstrap"
-  Pages: require "./pages"
+  Page: require "./page"
+  Renderer: require "./renderer"
