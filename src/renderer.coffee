@@ -4,7 +4,7 @@ class Renderer
   
   render: (fn) ->
     @buffer = ""
-    fn()
+    fn(@)
     result = @buffer
     @buffer = ""
     result
