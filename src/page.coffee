@@ -6,8 +6,7 @@ class Page
     
     {meta,scripts,sheets,body} = options
 
-    meta ?= {}
-    meta.charset ?= "utf-8"
+    meta ?= []
     scripts ?= []
     sheets ?= []
     
@@ -17,8 +16,9 @@ class Page
     @html =>
 
       @head =>
-        for key,value of meta
-          @meta name: key, content: value
+        
+        for _meta in meta
+          @meta _meta
 
         for script in scripts
           @script src: script, type: "text/javascript"
