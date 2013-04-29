@@ -1,4 +1,5 @@
-module.exports = 
-  HTML: require "./html"
-  Page: require "./page"
-  Renderer: require "./renderer"
+Object.defineProperties module.exports, 
+  HTML: get: -> require "./html"
+  CSS: get: -> require "./css"
+  Page: get: -> require "./page"
+  Renderer: get -> require "./renderer"

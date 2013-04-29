@@ -1,10 +1,9 @@
 {w,type} = require "fairmont"
-beautify = require "./beautify"
+beautify = require "./beautify-html"
+Renderer = require "./renderer"
 
-class HTML
-  
-  text: (string) -> @buffer += string
-  
+class HTML extends Renderer
+    
   doctype: -> @text "<!DOCTYPE html>" 
 
   _tag: (name,_void,args...) ->
