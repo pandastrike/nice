@@ -1,5 +1,8 @@
+lazyLoader = (name) -> get: -> require "./#{name}", enumerable: true
+
 Object.defineProperties module.exports, 
-  HTML: get: -> require "./html"
-  CSS: get: -> require "./css"
-  Page: get: -> require "./page"
-  Renderer: get: -> require "./renderer"
+  HTML: lazyLoader "html"
+  CSS: lazyLoader "css" 
+  Page: lazyLoader "page"
+  Renderer: lazyLoader "renderer"
+  Component: lazyLoader "component"

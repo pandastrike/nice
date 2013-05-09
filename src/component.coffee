@@ -1,64 +1,48 @@
-{w,type} = require "fairmont"
+{include,Property} = require "fairmont"
 
-class Composer
+module.exports = class Component
+  
+  include @, Property
+  
+  # Bind to DOM element in the case where the component is already rendered.
+  # This will also ::decorate the associated DOM tree.
+  bind: (@$) ->
+    @decorate()
 
-  @include: (mixins...) ->
-    for mixin in mixins
-      for key, value of mixin::
-        @::[key] = value
-    @
-
-  constructor: (@root={}) ->
-
-  render: (fn) ->
-    @root = {}
-    fn(@)
-    result = @root
-    @root = {}
-    result
-
-  _tag: (name,label,options,fn) ->
-    @root[label] =
-      _parent: @root
-      _root: (if @root._root? then @root._root else @root)
-      _attributes: options
-    @root = @root[label]
-    fn?()
-    @root = @root._parent
+  # Render the HTML, appending to a given dom element. This will also 
+  # ::decorate the DOM tree.
+  render: (dom) ->
+    @$ = $( @html )
+    @decorate()
+    dom.html @$
+    
+  # Add all the event handlers associated with this component.
+  decorate: ->
     
 
-for tag in w "page panel header footer article sidebar search ads aboutMe popular"
-  do (tag) ->
-    Composer::[tag] = (args...) ->
-      label = tag
-      options = {}
-      fn = null
-      for arg in args
-        switch type( arg )
-          when "string" then label = arg
-          when "object" then options = arg
-          when "function" then fn = arg
-      @_tag( tag, label, options, fn )
-
-
-class App extends Composer
-  main: ->
-    @page title: "My Blog", =>
-      @panel orient: "vertically", =>
-        @header title: "My Blog"
-        @panel "content", orient: "horizontally", =>
-          @article title: "My Post"
-          @sidebar =>
-            @search()
-            @ads()
-            @aboutMe()
-            @popular()
-        @footer()
-              
-              
-app = new App
-root = app.render -> app.main()
-console.log root.page.panel.content.sidebar
-
-            
-            
+  # Get/set the data element, converting to/from EventedData.
+  # Should be defined in the descendent classes.
+  #  
+  # @property data:
+  # 
+  #   get: ->
+  # 
+  #   set: (data) ->
+  # 
+  # Get/set the html property, rendering it anew if necessary.
+  # Should be defined in the descendent classes.
+  #
+  # @property html:  
+  # 
+  #   get: ->
+  # 
+  #   set: (data) ->
+  #
+  
+  # Iterate through all the child components, execution an action
+  # for each one.
+  each: (action) ->
+  
+  
+  
+  
