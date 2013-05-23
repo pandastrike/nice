@@ -1,25 +1,60 @@
 {include,Property} = require "fairmont"
+{EventChannel} = require "mutual"
+
+# Convert title-case to corset-case
+convert = (s) -> s.replace(/^([A-Z])/, (c) -> c.toLowerCase()).replace(/([A-Z])/g, (c) -> "-" + c.toLowerCase())
+
+# Convert a class name (ex: ArticleSummary) into a CSS class name ("article-summary")
+cname = (self) -> convert( self.constructor.name )
 
 module.exports = class Component
   
   include @, Property
   
+  constructor: (@name) ->
+    @decorators = []
+    @events = new EventChannel
+  
+  # Find a DOM node within $ to bind to, if possible, otherwise
+  # render - useful when you don't know if the content was pre-
+  # rendered or not
+  activate: (container) ->
+    unless @$?
+      candidates = container.find( ".#{cname(@)}" ).not( "[name]" )
+      if candidates.length > 0
+        @bind $(candidates[0])
+      else
+        @render container
+    else
+      container.append @$
+    @
+    
   # Bind to DOM element in the case where the component is already rendered.
   # This will also ::decorate the associated DOM tree.
   bind: (@$) ->
     @decorate()
+    @$.attr("name", @name)
+    @
 
   # Render the HTML, appending to a given dom element. This will also 
   # ::decorate the DOM tree.
-  render: (dom) ->
+  render: (container) ->
     @$ = $( @html )
     @decorate()
-    dom.html @$
+    container.append @$
+    @
     
   # Add all the event handlers associated with this component.
   decorate: ->
+    decorator( @$ ) for decorator in @decorators  
     
+  decorator: (fn) ->
+    @decorators.push fn
 
+  detach: ->
+    @$.detach()
+    @
+    
   # Get/set the data element, converting to/from EventedData.
   # Should be defined in the descendent classes.
   #  
