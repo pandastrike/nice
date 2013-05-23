@@ -18,6 +18,9 @@ module.exports = class CSS extends Renderer
     CSS::[method] = (value) ->
       @prefixProperty( property, value )
   
+  @main: ->
+    (new @).main()
+    
   constructor: ->
     @selectors = []
     super
@@ -103,7 +106,8 @@ CSS.makeProperty( property ) for property in w "azimuth background-attachment
   list-style-position list-style-type list-style 
   margin margin-left margin-right margin-top margin-bottom
   max-height max-width min-height min-width orphans outline-color 
-  outline-style outline-width outline overflow padding-top padding 
+  outline-style outline-width outline overflow padding-top 
+  padding padding-top padding-bottom padding-left padding-right
   page-break-after page-break-before page-break-inside pause-after 
   pause-before pause pitch-range pitch play-during position quotes richness 
   right speak-header speak-numeral speak-punctuation speak speech-rate stress 
@@ -116,7 +120,8 @@ CSS.makeProperty( property ) for property in w "border-radius"
 
 # see http://peter.sh/experiments/vendor-prefixed-css-property-overview/
 # to add to this list
-CSS.makePrefixProperty( property ) for property in w "box-sizing box-shadow"
+CSS.makePrefixProperty( property ) for property in w "box-sizing box-shadow 
+  column-count column-gap column-rule-color column-rule-style column-rule-width"
 
 # rgb <-> hsl algorithms from
 # http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
