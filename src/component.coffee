@@ -22,8 +22,10 @@ module.exports = class Component
     unless @$?
       candidates = container.find( ".#{cname(@)}" ).not( "[name]" )
       if candidates.length > 0
+        console.log "BIND", cname(@)
         @bind $(candidates[0])
       else
+        console.log "RENDER", cname(@)
         @render container
     else
       container.append @$
@@ -39,6 +41,7 @@ module.exports = class Component
   # Render the HTML, appending to a given dom element. This will also 
   # ::decorate the DOM tree.
   render: (container) ->
+    console.log "-- RENDER", cname(@)
     @$ = $( @html )
     @decorate()
     container.append @$
