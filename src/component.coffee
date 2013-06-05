@@ -50,6 +50,7 @@ module.exports = class Component
   # Add all the event handlers associated with this component.
   decorate: ->
     decorator( @$ ) for decorator in @decorators  
+    @
     
   decorator: (fn) ->
     @decorators.push fn
