@@ -1,42 +1,58 @@
 {type} = require "fairmont"
 {EventChannel} = require "mutual"
 
-class EventedObject
+badProperty = (name) -> 
+  new Error "EventedData instances can't have a property named '#{name}'"
+
+module.exports = class EventedData
   
-  constructor: (@data,@events) ->
-    @wrapped = {}
-    @events ?= new EventChannel
-    for key, _ of @data
-      do (key) =>
-        Object.defineProperty @, key,
-          get: -> 
-            value = @data[ key ]
-            switch type( value )
-              when "object"
-                @wrapped[ key ] ?= new EventedObject( value, @events.source( key ) )
-              else value
-          set: (value) ->
-            @data[key] = value
-            delete @wrapped[ key ]
-            @events.fire event: "#{key}.change", content: value
-            @
-          enumerable: true
-          configurable: false
-
-
-data = new EventedObject
-  name: 
-    first: "Daniel"
-    last: "Yoder"
-  email: "danielyoder@gmail.com"
-  url: "http://rocket.ly"
+  Object.defineProperty @::, "$data",
+    get: -> @_data
+    set: (value) -> 
+      @_data = value
+      @$events.emit "refresh", value
+    enumerable: true
+    configurable: false
   
-data.events.on "*.change", (value) ->
-  console.log "  Name: #{data.name.first} #{data.name.last}"
-  console.log "  Email: #{data.email}"
-  console.log "  URL: #{data.url}"
-  console.log "-------------------------------"
-
-data.email = "dan@pandastrike.com"
-data.url = "http://pandastrike.com"
-data.name.first = "Dan"
+  $on: -> @$events.on( arguments... )
+  
+  $get: (key) -> 
+    [first,rest...] = key.split(".")
+    if rest.length == 0
+      value = @$data[ key ]
+      switch type( value )
+        when "object"
+          @__wrapped[ key ] ?= 
+            new EventedData( value, @$events.source( key ) )
+        else value
+    else
+      if ( child = @$get(first) )?
+        child.$get( rest.join("."), value )
+        
+  $set: (key,value) ->
+    [first,rest...] = key.split(".")
+    if rest.length == 0
+      @$data[key] = value
+      delete @__wrapped[ key ]
+      @$events.emit "#{key}.change", value
+      @
+    else
+      if ( child = @$get(first) )?
+        child.$set( rest.join("."), value )
+  
+  $define: (key) ->
+    throw badProperty("constructor") if key == "constructor"
+    Object.defineProperty @, key,
+      get: -> @$get( key )
+      set: (value) -> @$set( key, value )
+      enumerable: true
+      configurable: false
+  
+  constructor: (data,events) ->
+    @__wrapped = {}
+    # IMPORTANT: We have to assign events first in case someone is
+    # listening for the "refresh" event.
+    @$events = events
+    @$data = data
+    @$events ?= new EventChannel
+    @$define( key ) for key, _ of @$data
