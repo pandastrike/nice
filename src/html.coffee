@@ -2,6 +2,28 @@
 beautify = require "./beautify-html"
 Renderer = require "./renderer"
 
+pairToDeclaration = (key,value) ->
+  key = key.trim() ; value = value.trim()
+  if value? and value != ""
+    "#{key}='#{value}'"
+  else
+    ""
+objectToDeclarations = (object) ->
+  declarations = [] 
+  for key,value of object
+    switch type( value )
+      when "string"
+        declarations.push( pairToDeclaration( key, value ) )
+      when "array"
+        declarations.push( pairToDeclaration( key, value.join(" ") ) )
+      when "object"
+        for _key, _value of value
+          declarations.push( 
+            pairToDeclaration( "#{key}-#{_key}", _value.toString() ) )
+      else
+        declarations.push( pairToDeclaration( key, value.toString() ) )
+  declarations.join(" ")
+  
 class HTML extends Renderer
     
   doctype: -> @text "<!DOCTYPE html>" 
@@ -10,7 +32,7 @@ class HTML extends Renderer
 
     content = null
     generator = null
-    attributes = {}
+    attributes = ""
     
     for arg in args
       switch type arg
@@ -19,11 +41,7 @@ class HTML extends Renderer
         when "string","number", "boolean"
           content = arg
         when "object"
-          attributes = arg
-          
-    attributes = (for key,value of attributes
-      value = value.join(" ").trim() if type(value) is "array"
-      "#{key}='#{value}'" if value? and value!="").join(" ").trim()
+          attributes = objectToDeclarations( arg )
       
     @text "<#{name}"
     @text " #{attributes}" unless attributes == ""
