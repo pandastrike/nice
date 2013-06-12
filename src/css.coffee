@@ -25,15 +25,19 @@ module.exports = class CSS extends Renderer
     @selectors = []
     super
     
-  rule: (args...) ->
+  cssNumber: (number,units) ->
+    sprintf( "%.2f%s", number, units )
+
+  rule: ->
     
-    if args.length == 2
-      [selector,properties] = args
-    else
-      [properties] = args
-      selector = ""
-      
-    selector = [ @selectors..., selector ].join(" ")
+    [ selectors...,properties ] = arguments
+    
+    selectors.push( "" ) if selectors.length == 0
+    
+    selectors = for selector in selectors
+      [ @selectors..., selector ].join(" ")
+    
+    selector = selectors.join(", ")
 
     @text "#{selector} {\n"
     properties()
@@ -97,9 +101,13 @@ module.exports = class CSS extends Renderer
 # from http://www.w3.org/TR/CSS21/propidx.html
 CSS.makeProperty( property ) for property in w "azimuth background-attachment 
   background-color background-image background-position background-repeat 
-  background border border-collapse border-color border-spacing border-style 
-  border-top border-top-color border-top-style border-top-width border-width 
-  border-bottom caption-side clear clip color content counter-increment 
+  background 
+  border border-collapse border-color border-spacing border-style border-width 
+  border-top border-top-color border-top-style border-top-width 
+  border-bottom border-bottom-color border-bottom-style border-bottom-width 
+  border-left border-left-color border-left-style border-left-width 
+  border-right border-right-color border-right-style border-right-width 
+  caption-side clear clip color content counter-increment 
   counter-reset cue-after cue-before cue cursor direction elevation 
   empty-cells float font-family font-size font-style font-variant font-weight 
   font height left letter-spacing line-height list-style-image 
@@ -116,7 +124,7 @@ CSS.makeProperty( property ) for property in w "azimuth background-attachment
   widows width word-spacing z-index"
   
 # other properties that have become de facto standardized
-CSS.makeProperty( property ) for property in w "border-radius"
+CSS.makeProperty( property ) for property in w "border-radius opacity"
 
 # see http://peter.sh/experiments/vendor-prefixed-css-property-overview/
 # to add to this list
