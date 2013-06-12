@@ -1,15 +1,17 @@
-# rhythm: (proportion, block) ->
-#   block (size) =>
-#     height = Math.ceil( size )
-#     size = ( height * ( 1 / proportion ) ).toPrecision( 3 )
-#     @fontSize "#{size}rem"
-#     @lineHeight "#{height}rem"
-# 
-# scale: (factor) ->
-#   @rule "html", =>
-#     percentage = ( factor * 100).toPrecision( 2 )
-#     @fontSize "#{percentage}%"
-#     @lineHeight "1"
+module.exports = 
+  
+  rhythm: (proportion, block) ->
+    block (size) =>
+      height = Math.ceil( size )
+      size = ( height * ( 1 / proportion ) )
+      @fontSize @cssNumber( size, "rem" )
+      @lineHeight "#{height}rem"
+
+  scale: (factor) ->
+    @rule "html", =>
+      percentage = factor * 100
+      @fontSize @cssNumber( percentage, "%" )
+      @lineHeight "1"
 # 
 # heading: (selector,block) ->
 #   @rule selector, =>
