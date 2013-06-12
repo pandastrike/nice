@@ -53,26 +53,60 @@ module.exports = class Component
   decorator: (fn) ->
     @decorators.push fn
     
+  # TODO: this is super-simplistic right now. we should handle
+  # more data types and allow for custom render functions, too.
   dataDecorator: =>
-    console.log "Setting up mappings ..."
     # map all the named DOM elements to the @data property
     for el in @$.find("[name]")
       do (el=$(el)) =>
-        el.prop("disabled", true)
-        name = el.attr("name")
-        update = (value) -> 
-          if el.prop("tagName") in ["INPUT","TEXTAREA"]
-            el.val( value ) if el.val() != value
-          else
-            el.text( value )
-        @events.on "data.refresh", => 
-          el.prop( "disabled",false )
-          update( @data.$get( name ) )
-        @events.on "data.#{name}.change", update
-        el.change => 
-          @data.$set( el.val().toString() )
-          false
 
+        el.prop("disabled", true)
+
+        name = el.attr("name")
+
+        type = el.data("type")
+        type ?= "string"   
+        switch type
+
+          when "string"
+            update = (value) -> 
+              if el.prop("tagName") in ["INPUT","TEXTAREA"]
+                switch el.prop("type")
+                  when "checkbox"
+                    el.prop("checked", !!value )
+                  else
+                    el.val( value ) if el.val() != value
+              else
+                el.text( value )
+            @events.on "data.refresh", => 
+              el.prop( "disabled",false )
+              update( @data.$get( name )?.toString() )
+            @events.on "data.#{name}.change", update
+            el.change => 
+              switch el.prop("type")
+                when "checkbox"
+                  @data.$set( name, el.prop("checked") )
+                else
+                  @data.$set( name, el.val()  )
+              false
+        
+          when "array"
+            update = (value) -> 
+              if el.prop("tagName") in ["INPUT","TEXTAREA"]
+                el.val( value ) if el.val() != value
+              else
+                el.text( value )
+            @events.on "data.refresh", => 
+              el.prop( "disabled",false )
+              update( @data.$get( name ).join(", ") )
+            @events.on "data.#{name}.change", update
+            el.change => 
+              value = el.val().split(",")
+              value = (item.trim() for item in value)
+              @data.$set( name, value )
+              false
+          
+        
   detach: ->
     @$.detach()
     @
