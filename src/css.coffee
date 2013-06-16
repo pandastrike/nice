@@ -21,28 +21,68 @@ module.exports = class CSS extends Renderer
   @main: ->
     (new @).main()
     
+  @combinators:
+    contains: (string) -> " #{string}"
+    variant: (string) -> string
+    sibling: (string) -> " + #{string}"
+    child: (string) -> " > #{string}"
+    
   constructor: ->
-    @selectors = []
+    @selectors = [""]
+    @mixins =
+      main: {}
+      rule: {}
+      property: {}
+      breakpoint: {}
     super
     
-  cssNumber: (number,units) ->
+  mixin: ->
+    for mixin in arguments
+      mixin.call( @, @mixins.main )
+      
+  number: (number,units) ->
     sprintf( "%.2f%s", number, units )
 
+  import: (reference) ->
+    @text "@import #{reference};\n\n"
+
+  important: (value) ->
+    "#{value} !important"
+    
+  media: (query,rules) ->
+    @text "@media #{query} {\n"
+    do rules
+    @text "}\n\n"
+    
+  context: (selector,fn) ->
+    [ rest..., last ] = @selectors
+    @selectors.push( "#{last}#{selector}" )
+    fn( @mixins.rule )
+    @selectors.pop()
+    @buffer
+
+  breakpoint: (fn) ->
+    fn( @mixins.breakpoint )
+    
   rule: ->
     
-    [ selectors...,properties ] = arguments
+    [ selectors..., properties ] = arguments
     
     selectors.push( "" ) if selectors.length == 0
     
+    [rest...,context] = @selectors
     selectors = for selector in selectors
-      [ @selectors..., selector ].join(" ")
+      "#{context}#{selector}"
     
     selector = selectors.join(", ")
 
     @text "#{selector} {\n"
-    properties()
+    properties( @mixins.property )
     @text "}\n\n"
-    
+  
+  property: (name, value) ->
+    @text "  #{name}: #{value};\n"
+
   # TODO: this might be a bit simplistic; often
   # prefixes are used in one browser but not another
   # see below ...
@@ -51,25 +91,9 @@ module.exports = class CSS extends Renderer
     @property "-moz-#{name}", value
     @property name, value
     
-  property: (name, value) ->
-    @text "  #{name}: #{value};\n"
-    
-  percent: (value) ->
-    sprintf( "%.2f%%", value * 100 )
-      
-  # used to render with loops
   block: (fn) ->
-    fn()
+    fn( @mixins.main )
     @buffer 
-    
-  context: (selector,fn) ->
-    @selectors.push( selector ) 
-    fn()
-    @selectors.pop()
-    @buffer
-    
-  import: (reference) ->
-    @text "@import #{reference};\n\n"
     
   display: (value) ->
     if value == "flexbox"
@@ -132,7 +156,7 @@ CSS.makePrefixProperty( property ) for property in w "box-sizing box-shadow
   column-count column-gap column-rule-color column-rule-style   
   column-rule-width"
 
-for name in w "Buttons Colors Forms Grid Theme Typography"
+for name in w "Basics Buttons Colors Dialogs Forms Grid Theme Typography"
   do (name) ->
     Object.defineProperty CSS, name, 
       get: -> require "./css/#{name.toLowerCase()}"

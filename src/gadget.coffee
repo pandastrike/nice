@@ -8,7 +8,7 @@ convert = (s) -> s.replace(/^([A-Z])/, (c) -> c.toLowerCase()).replace(/([A-Z])/
 # Convert a class name (ex: ArticleSummary) into a CSS class name ("article-summary")
 cname = (self) -> convert( self.constructor.name )
 
-module.exports = class Component
+module.exports = class Gadget
   
   include @, Property
   
@@ -73,14 +73,14 @@ module.exports = class Component
               if el.prop("tagName") in ["INPUT","TEXTAREA"]
                 switch el.prop("type")
                   when "checkbox"
-                    el.prop("checked", !!value )
+                    el.prop("checked", value )
                   else
                     el.val( value ) if el.val() != value
               else
                 el.text( value )
             @events.on "data.refresh", => 
               el.prop( "disabled",false )
-              update( @data.$get( name )?.toString() )
+              update( @data.$get( name ) )
             @events.on "data.#{name}.change", update
             el.change => 
               switch el.prop("type")

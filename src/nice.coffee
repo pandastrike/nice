@@ -2,7 +2,7 @@ modules =
   HTML: "html"
   CSS: "css"
   Renderer: "renderer"
-  Component: "component"
+  Gadget: "gadget"
   EventedData: "evented-data"
 
 for pname, mname of modules

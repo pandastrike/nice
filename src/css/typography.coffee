@@ -1,17 +1,21 @@
-module.exports = 
+module.exports = ->
   
-  rhythm: (proportion, block) ->
+  @mixins.main.rhythm = (proportion, block) =>
     block (size) =>
       height = Math.ceil( size )
       size = ( height * ( 1 / proportion ) )
       @fontSize @cssNumber( size, "rem" )
       @lineHeight "#{height}rem"
 
-  scale: (factor) ->
+  @mixins.main.scale = (factor) =>
     @rule "html", =>
       percentage = factor * 100
-      @fontSize @cssNumber( percentage, "%" )
+      @fontSize @number( percentage, "%" )
       @lineHeight "1"
+
+  @mixins.main.scale 1.0
+
+
 # 
 # heading: (selector,block) ->
 #   @rule selector, =>
