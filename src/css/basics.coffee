@@ -8,6 +8,9 @@ module.exports = ->
     @margin "auto"
     @marginTop "2rem"
 
+  @rule "ul", =>
+    @marginLeft "-1rem"
+    
   @rule "a", =>
     @color @theme.colors.link
     @textDecoration "none"

@@ -45,9 +45,15 @@ module.exports = class Gadget
     container.append @$
     @
     
+  @property renderer: 
+    get: -> @_html ?= new @constructor.HTML( @data )
+    
+  @property html:
+    get: -> @renderer.render => @renderer.main()
+    
   # Add all the event handlers associated with this component.
   decorate: ->
-    decorator( @$ ) for decorator in @decorators  
+    decorator( @ ) for decorator in @decorators  
     @
     
   decorator: (fn) ->

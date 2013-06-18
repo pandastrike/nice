@@ -1,11 +1,12 @@
 module.exports = ->
   
   @mixins.main.rhythm = (proportion, block) =>
-    block (size) =>
+    typeSize = (size) =>
       height = Math.ceil( size )
       size = ( height * ( 1 / proportion ) )
-      @fontSize @cssNumber( size, "rem" )
+      @fontSize @number( size, "rem" )
       @lineHeight "#{height}rem"
+    block( { typeSize } )
 
   @mixins.main.scale = (factor) =>
     @rule "html", =>
@@ -15,15 +16,13 @@ module.exports = ->
 
   @mixins.main.scale 1.0
 
+  @mixins.property.heading = =>
+    @fontFamily @theme.fonts.headings
+    @fontWeight "bold"
+    @margin 0 ; @padding 0
+    @marginBottom "1rem"
 
-# 
-# heading: (selector,block) ->
-#   @rule selector, =>
-#     @fontFamily fonts.headings
-#     @fontWeight 700
-#     @color colors.text
-#     @marginBottom "2rem"
-#     block()
+
 #     
 # main: ->
 #   
