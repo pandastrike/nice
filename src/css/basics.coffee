@@ -3,11 +3,6 @@ module.exports = ->
   @rule "html *", =>
     @boxSizing "border-box"
   
-  @rule "body", =>
-    @width "72rem"
-    @margin "auto"
-    @marginTop "2rem"
-
   @rule "ul", =>
     @marginLeft "-1rem"
     

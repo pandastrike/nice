@@ -1,6 +1,7 @@
 Renderer = require "./renderer"
 {w} = require "fairmont"
 {sprintf} = require "sprintf"
+{overload} = require "typely"
 
 snakeCaseToCamelCase = (string) -> 
   string.replace /(\-[a-z])/g, ($1) -> 
@@ -19,7 +20,8 @@ module.exports = class CSS extends Renderer
       @prefixProperty( property, value )
   
   @main: ->
-    (new @).main()
+    renderer = new @
+    renderer.main( renderer.mixins.main )
     
   @combinators:
     contains: (string) -> " #{string}"
@@ -61,8 +63,16 @@ module.exports = class CSS extends Renderer
     @selectors.pop()
     @buffer
 
-  breakpoint: (fn) ->
-    fn( @mixins.breakpoint )
+  breakpoint: overload (match) ->
+
+    match "object", (queries) ->
+      for name,query of queries
+        do (name, query) =>
+          @mixins.breakpoint[name] = (rules) =>
+            @media( query, rules )
+          
+    match "function", (fn) ->
+      fn( @mixins.breakpoint )
     
   rule: ->
     
