@@ -1,10 +1,10 @@
 class Renderer
 
-  constructor: (@buffer="") ->
+  constructor: ( @buffer = "" ) ->
   
   render: (fn) ->
     @buffer = ""
-    fn(@)
+    fn( @ )
     result = @buffer
     @buffer = ""
     result

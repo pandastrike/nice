@@ -4,7 +4,8 @@ module.exports = ->
     @boxSizing "border-box"
   
   @rule "ul", =>
-    @marginLeft "-1rem"
+    @padding 0
+    @margin 0
     
   @rule "a", =>
     @color @theme.colors.link

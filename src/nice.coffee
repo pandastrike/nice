@@ -3,6 +3,7 @@ modules =
   CSS: "css"
   Renderer: "renderer"
   Gadget: "gadget"
+  DataGadget: "data-gadget"
   EventedData: "evented-data"
 
 for pname, mname of modules
