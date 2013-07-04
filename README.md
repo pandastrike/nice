@@ -36,7 +36,7 @@ Here's another example showing the use of classes and attributes along with help
 
 ### Code Instead Of Preprocessors
 
-We can do the same trick with CSS. Rather than learning yet another specialize language, like Less, let's just use CoffeeScript:
+We can do the same trick with CSS. Rather than learning yet another specialized language, like Less, let's just use CoffeeScript:
 
     @rule "body", =>
       @margin "auto"
@@ -117,7 +117,7 @@ You can even create data-aware components. Here's some markup for a form that wi
           placeholder: "Enter a name here"
 
 
-Looks like any other markup, right? That's because Nice simply checks the `attribute`. (You can give Nice hints when it guesses wrong as to what to do with a binding with special `data` attributes).
+Looks like any other markup, right? That's because Nice simply checks the `name` attribute. (You can give Nice hints when it guesses wrong as to what to do with a binding with special `data` attributes).
 
 ### Events Instead Of Callbacks
 
