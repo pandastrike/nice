@@ -1,6 +1,6 @@
 {
   "name": "nice",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Component-based (instead of template-based) views for CoffeeScript",
   "main": "src/nice.coffee",
   "directories": {
@@ -17,9 +17,9 @@
     "template"
   ],
   "dependencies": {
-    "fairmont": "0.3.x",
+    "fairmont": "~0.7.0",
     "sprintf": "~0.1.1",
-    "mutual": "~0.3.x",
+    "mutual": "~0.4.3",
     "typely": "0.0.0"
   },
   "author": "Dan Yoder",
