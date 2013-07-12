@@ -42,26 +42,26 @@ Nice provides CSS renderer mixins for buttons, colors, themes, dialogs, forms, g
 
 Here is the example above, but simplified by using the typography mixin:
 
-{CSS} = require "nice"
-class MyStyleSheet extends CSS
+    {CSS} = require "nice"
+    class MyStyleSheet extends CSS
 
-  main: ({rhythm})->
+      main: ({rhythm})->
   
-    rhythm 1.1, (typeSize) =>
+        rhythm 1.1, (typeSize) =>
     
-      @rule "h1", =>
-        typeSize 5
-        @marginBottom "2rem"
+          @rule "h1", =>
+            typeSize 5
+            @marginBottom "2rem"
       
-      @rule "p", =>
-        typeSize 2
-        @marginBottom "1rem"
+          @rule "p", =>
+            typeSize 2
+            @marginBottom "1rem"
       
-    @rule "img", =>
-      @padding "0.5rem"
-      @border "1px solid silver"
-      @float "left"
-      @marginRight "0.5rem"
+        @rule "img", =>
+          @padding "0.5rem"
+          @border "1px solid silver"
+          @float "left"
+          @marginRight "0.5rem"
 
 ## Media Queries
 
