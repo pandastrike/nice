@@ -14,8 +14,14 @@ Early stages of development.
 
   * [The Renderer interface][renderer-interface]
   
+    * [The HTML Renderer][html-renderer]
+    
+    * [The CSS Renderer][css-renderer]
+  
   * [The Gadget interface][gadget-interface]
   
 [motivation]:./docs/motivation.md
-[renderer-interface]:./renderer-interface.md
+[renderer-interface]:./docs/renderer-interface.md
+[html-renderer]:./docs/html-renderer.md
+[css-renderer]:./docs/css-renderer.md
 [gadget-interface]:./docs/gadget-interface.md
