@@ -6,7 +6,7 @@ module.exports = class Gadget
   
   @counter: 0
   
-  decorators: []
+  decorators: null
   
   decorated: false
   
@@ -19,6 +19,7 @@ module.exports = class Gadget
     @name ?= "#{@class}-#{@constructor.counter++}"
     @events ?= new EventChannel
     @html = new @constructor.HTML source: @
+    @decorators = []
   
   attach: ( @container ) ->
     @root ?= do @candidate or do @build
