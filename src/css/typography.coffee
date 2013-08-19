@@ -10,8 +10,7 @@ module.exports = ->
 
   @mixins.main.scale = (factor) =>
     @rule "html", =>
-      percentage = factor * 100
-      @fontSize @number( percentage, "%" )
+      @fontSize @number( factor, "%" )
       @lineHeight "1"
 
   @mixins.main.scale 1.0

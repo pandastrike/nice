@@ -43,6 +43,7 @@ module.exports = class CSS extends Renderer
       mixin.call( @, @mixins.main )
       
   number: (number,units) ->
+    number *= 100 if units == "%"
     sprintf( "%.2f%s", number, units )
 
   import: (reference) ->
