@@ -30,7 +30,7 @@ module.exports = class CSS extends Renderer
     child: (string) -> " > #{string}"
     
   constructor: ->
-    @selectors = [""]
+    @selectors = [[""]]
     @mixins =
       main: {}
       rule: {}
@@ -57,9 +57,14 @@ module.exports = class CSS extends Renderer
     do rules
     @text "}\n\n"
     
-  context: (selector,fn) ->
-    [ rest..., last ] = @selectors
-    @selectors.push( "#{last}#{selector}" )
+  context: (selectors..., fn) ->
+    [_...,context] = @selectors
+    q = []
+    for parent in context
+      for selector in selectors
+        q.push "#{parent}#{selector}"
+      
+    @selectors.push q
     fn( @mixins.rule )
     @selectors.pop()
     @buffer
@@ -75,17 +80,18 @@ module.exports = class CSS extends Renderer
     match "function", (fn) ->
       fn( @mixins.breakpoint )
     
-  rule: ->
+  rule: (selectors..., properties)->
+        
+    [_...,context] = @selectors
+    selector = if selectors.length > 0
+      q = []
+      for parent in context
+        for selector in selectors
+          q.push "#{parent}#{selector}"
     
-    [ selectors..., properties ] = arguments
-    
-    selectors.push( "" ) if selectors.length == 0
-    
-    [rest...,context] = @selectors
-    selectors = for selector in selectors
-      "#{context}#{selector}"
-    
-    selector = selectors.join(", ")
+      q.join(", ")
+    else
+      context.join(", ")
 
     @text "#{selector} {\n"
     properties( @mixins.property )
